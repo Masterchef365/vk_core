@@ -1,0 +1,11 @@
+[package]
+name = "vk_core"
+version = "0.1.0"
+authors = ["Masterchef365 <duncan.freeman1@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+erupt = "0.15"
+anyhow = "1"
+gpu-alloc-erupt = "0.1"
+gpu-alloc = "0.2"
