@@ -1,3 +1,5 @@
+mod desc_set_alloc;
+pub use desc_set_alloc::DescriptorSetAllocator;
 use erupt::{
     utils::loading::DefaultEntryLoader, vk1_0 as vk, DeviceLoader, EntryLoader, InstanceLoader, cstr
 };
@@ -106,7 +108,8 @@ impl Core {
     }
 }
 
-fn select_compute_device(instance: &InstanceLoader) -> Result<(u32, vk::PhysicalDevice)> {
+/// Find a queue family index and physical device for simple compute shader needs
+pub fn select_compute_device(instance: &InstanceLoader) -> Result<(u32, vk::PhysicalDevice)> {
     let physical_devices = unsafe { instance.enumerate_physical_devices(None) }.result()?;
     for device in physical_devices {
         let families =
