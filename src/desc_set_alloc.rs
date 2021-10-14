@@ -46,7 +46,7 @@ impl DescriptorSetAllocator {
         let descriptor_pool = unsafe {
             self.core
                 .device
-                .create_descriptor_pool(&create_info, None, None)
+                .create_descriptor_pool(&create_info, None)
         }
         .result()?;
 

@@ -5,7 +5,7 @@ authors = ["Masterchef365 <duncan.freeman1@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-erupt = "0.15"
+erupt = "0.19"
 anyhow = "1"
-gpu-alloc-erupt = "0.1"
-gpu-alloc = "0.2"
+gpu-alloc-erupt = "0.5"
+gpu-alloc = "0.5"

@@ -1,7 +1,7 @@
 mod desc_set_alloc;
 pub use desc_set_alloc::DescriptorSetAllocator;
 use erupt::{
-    utils::loading::DefaultEntryLoader, vk1_0 as vk, DeviceLoader, EntryLoader, InstanceLoader, cstr
+    vk1_0 as vk, DeviceLoader, EntryLoader, InstanceLoader, cstr
 };
 use gpu_alloc::{self, GpuAllocator};
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -13,7 +13,7 @@ pub struct Core {
     pub queue: vk::Queue,
     pub device: DeviceLoader,
     pub instance: InstanceLoader,
-    pub _entry: DefaultEntryLoader,
+    pub _entry: EntryLoader,
 }
 
 /// All structures outside of the core generated while the core is made
@@ -34,10 +34,10 @@ impl Core {
         let name = std::ffi::CString::new(name)?;
         let app_info = vk::ApplicationInfoBuilder::new()
             .application_name(&name)
-            .application_version(vk::make_version(1, 0, 0))
+            .application_version(vk::make_api_version(0, 1, 0, 0))
             .engine_name(&name)
-            .engine_version(vk::make_version(1, 0, 0))
-            .api_version(vk::make_version(1, 0, 0));
+            .engine_version(vk::make_api_version(0, 1, 0, 0))
+            .api_version(vk::make_api_version(0, 1, 0, 0));
 
         // Instance and device layers and extensions
         let mut instance_layers = Vec::new();
@@ -60,7 +60,9 @@ impl Core {
             .enabled_extension_names(&instance_extensions)
             .enabled_layer_names(&instance_layers);
 
-        let instance = InstanceLoader::new(&entry, &create_info, None)?;
+        let instance = unsafe {
+            InstanceLoader::new(&entry, &create_info, None)?
+        };
 
         // Hardware selection
         let (queue_family_index, physical_device) = select_compute_device(&instance)?;
@@ -77,8 +79,10 @@ impl Core {
             .enabled_extension_names(&device_extensions)
             .enabled_layer_names(&device_layers);
 
-        let device = DeviceLoader::new(&instance, physical_device, &create_info, None)?;
-        let queue = unsafe { device.get_device_queue(queue_family_index, 0, None) };
+        let device = unsafe {
+            DeviceLoader::new(&instance, physical_device, &create_info, None)?
+        };
+        let queue = unsafe { device.get_device_queue(queue_family_index, 0) };
 
         // GpuAllocator
         let device_props = unsafe { gpu_alloc_erupt::device_properties(&instance, physical_device)? };
